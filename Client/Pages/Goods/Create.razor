@@ -1,0 +1,20 @@
+﻿@page "/goods/create"
+@inject HttpClient http
+@inject NavigationManager navigation
+
+<h3>Add New Good to the List</h3>
+
+<!-- just "Form" will call the component as is with its pre-defined attributes -->
+<Form ButtonText="Add to goods list"
+      good="@good"
+      OnValidSubmit="@CreateGood"/>
+
+@code {
+    Good good = new Good();
+
+    async Task CreateGood()
+    {
+        await http.PostAsJsonAsync("api/Goods", good);
+        navigation.NavigateTo("goods");
+    }
+}

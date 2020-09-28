@@ -1,0 +1,65 @@
+First and foremost, installing dependancies:
+
+- ON SERVER:
+	- Microsoft.EntityFrameworkCore
+	- Microsoft.EntityFrameworkCore.Design
+	- Microsoft.EntityFrameworkCore.SqlServer (not really needed, but oh well...)
+	- Microsoft.EntityFrameworkCore.Tools
+	- Pomelo.EntityFrameworkCore.MySql
+
+- ON SHARED:
+	- Microsoft.AspNetCore.Mvc.DataAnnotations
+	- System.ComponentModel.Annotations
+
+Also, install and update "dotnet ef" (dotnet tool install --global dotnet-ef && dotnet tool update --global dotnet-ef) in case of first use
+
+----------------------------------------------------------------
+
+The .Shared project can and will be used by both .Client and .Server projects, only needing to be called
+
+It will host all the models/classes we will need, which is, for now, the "Good.cs" (singular because of good pratices, even though I think this word doesn't exist)
+Simple attributes and GETs and SETs, no big deal
+
+To make it visible on the .Client project, we will add a " @using LearningBlazor.Shared " on .Client/_Imports.razor
+
+----------------------------------------------------------------
+
+With dependancies installed and models created, it's time to tinker the front end
+
+On .Client/Pages we will have all the pages (duh), which ends with .razor. Those are COMPONENTS, which can be called inside other components
+
+Explained, there will be a "GOODS" CRUD... so, on .Client/Pages we create the /Goods folder, which will have the Create, Edit, FetchData and Form .razor's
+
+To reach those pages, we modify the .Client/Shared/NavMenu.razor, which is the sidebar, to have a new item that links to a "/goods" page
+Also, to have an anchor point for that "/goods" link, we add it to the ./Client/Pages/Goods/FetchData.razor, as ' @page "/goods" '
+
+To check if it works, we run "dotnet build" then "dotnet watch run" on .Client... if all changes after this are on .Client only, there is no need to rebuild
+
+HTML, CSS, Bootstrap... you CAN use JS but it not "native"...
+
+----------------------------------------------------------------
+
+Anywhere within the HTML code part of a .razor file you can use @ to link it to the C# code section of that file (which is the " @code{} " part in the end)
+
+On .Client/Pages/Goods/Form.razor is used a " [Paramenter] " keyword, which will help it as a re-usable component, as seen in ../Create.razor and ../Edit.razor
+
+----------------------------------------------------------------
+
+With the front end done, time for the back end... meaning we will focus on the .Server project
+
+First, we create a " ApplicationDbContext.cs " class for database linkage mumbo-jumbo... it uses Microsoft Entity Framework Core
+
+We also add some lines to .Server/Startup.cs on that same mumbo-jumbo, on ConfigureServices method
+
+Finally, we setup connection strings on .Server/appsettings.json, with database name, login and password
+
+If all was done correctly, we can run migrations with "dotnet ef migrations add NAMEforMIGRATION" and update tables with "dotnet ef database update"
+
+----------------------------------------------------------------
+
+Now, to make ends meet, time to create the code portion of pages to manage the CRUD
+
+First, we need a controller for the goods: ./Server/Controllers/GoodsController.cs
+Using Visual Studio, you can right-click the folder and select to automate it... we are using the option that says "API" and "Entity Framework"
+
+Every page who will use the controller must have a "@inject HttpClient VAR_NAME" on top of it, or it won't work

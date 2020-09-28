@@ -1,0 +1,38 @@
+﻿<!-- since it is decided that the form will not have its own page and will be used inside other components, it does not have a title -->
+
+<EditForm Model="@good" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator /> <!-- to check and validate the inputs -->
+    <div class="form-group">
+        <label>Name:</label>
+        <div>
+            <InputText @bind-Value="@good.Name" />
+            <ValidationMessage For="@( () => good.Name )" />
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label>Description:</label>
+        <div>
+            <InputText @bind-Value="@good.Description" />
+            <ValidationMessage For="@( () => good.Description )" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Price:</label>
+        <div>
+            <InputNumber @bind-Value="@good.Price" />
+            <ValidationMessage For="@( () => good.Price )" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-outline-success">
+        @ButtonText
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public Good good { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+}

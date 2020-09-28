@@ -1,0 +1,26 @@
+﻿@page "/goods/edit/{goodId:int}"
+@inject HttpClient http
+@inject NavigationManager navigation
+
+<h3>Edit Existing Good</h3>
+
+<Form ButtonText="Update entry"
+      good="@good"
+      OnValidSubmit="@(() => EditGood(good.Id, good))" />
+
+@code {
+    [Parameter] public int goodId { get; set; }
+
+    Good good = new Good();
+
+    protected async override Task OnInitializedAsync()
+    {
+        good = await http.GetFromJsonAsync<Good>($"api/Goods/{goodId}");
+    }
+
+    async Task EditGood(int goodId, Good good)
+    {
+        await http.PutAsJsonAsync<Good>($"api/Goods/{goodId}", good);
+        navigation.NavigateTo("goods");
+    }
+}

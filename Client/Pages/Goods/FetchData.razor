@@ -1,0 +1,65 @@
+﻿@page "/goods"
+@inject HttpClient http
+
+<h3>List of Goods</h3>
+
+<div class="form-group">
+    <a class="btn btn-outline-success" href="goods/create">
+        <i class="oi oi-plus"></i> Add new good
+    </a>
+</div>
+
+@if (goods == null)
+{
+    <text>Loading...</text>
+}
+else if (goods.Count == 0)
+{
+    <text>No goods to show</text>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Descripion</th>
+                <th>Price</th>
+                <th></th> <!-- this blank header is for the action buttons-->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Good good in goods)
+            {
+                <tr>
+                    <td>@good.Id</td>
+                    <td>@good.Name</td>
+                    <td>@good.Description</td>
+                    <td>$ @good.Price</td>
+                    <td>
+                        <a class="btn btn-outline-primary" href="goods/edit/@good.Id">Edit</a>
+                        <button class="btn btn-outline-danger" @onclick="@(() => Delete(@good.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Good> goods { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // the "goods" array of goods will get when the page loads whatever the GET method returns from the controller
+        goods = await http.GetFromJsonAsync<List<Good>>("api/Goods");
+    }
+
+    async Task Delete(int goodId)
+    {
+        // how the method should be refenced as is written on the controller
+        await http.DeleteAsync($"api/Goods/{goodId}");
+        await OnInitializedAsync();
+    }
+}
